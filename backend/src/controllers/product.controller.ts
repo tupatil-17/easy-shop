@@ -58,8 +58,6 @@ export const getProductById = async (req: Request, res: Response) => {
   }
 };
 
-
-
 export const addProduct = async (req: AuthRequest, res: Response) => {
   try {
     const { name, description, price, stock, category } = req.body;
@@ -105,7 +103,6 @@ export const addProduct = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Failed to add product" });
   }
 };
-
 
 export const getMyProducts = async (req: AuthRequest, res: Response) => {
   try {

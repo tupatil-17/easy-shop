@@ -25,6 +25,7 @@ export const createDefaultAdmin = async () => {
       email: adminEmail,
       password: hashedPassword,
       role: "admin",
+      isEmailVerified: true,
     });
 
     console.log("Default admin created successfully");

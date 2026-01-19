@@ -122,7 +122,7 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    if (!user.isEmailVerified) {
+    if (!user.isEmailVerified && user.role !== "admin") {
       return res.status(400).json({ message: "Please verify your email first" });
     }
 

@@ -1,5 +1,4 @@
-// API Configuration
-// Update this file with your backend URL and endpoints
+
 
 export const API_CONFIG = {
   // Base URL for your backend API
