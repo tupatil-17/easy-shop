@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import axios from 'axios';
+import { axios } from '../context/AuthContext';
 import { API_ENDPOINTS } from '../config/api';
 
 interface OTPVerificationProps {

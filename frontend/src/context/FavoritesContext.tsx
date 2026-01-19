@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { axios } from './AuthContext';
 import { useAuth } from './AuthContext';
+import { API_ENDPOINTS } from '../config/api';
 
 interface FavoriteItem {
   id: string;
@@ -35,7 +36,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
   const fetchFavorites = async () => {
     try {
-      const response = await axios.get('/users/favourites');
+      const response = await axios.get(API_ENDPOINTS.FAVORITES.GET);
       const items = response.data.map((product: any) => ({
         id: product._id,
         productId: product._id,
@@ -57,7 +58,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   const addToFavorites = async (product: any) => {
     const productId = product._id || product.id;
     try {
-      await axios.post(`/users/favourites/${productId}`);
+      await axios.post(API_ENDPOINTS.FAVORITES.ADD(productId));
       await fetchFavorites();
     } catch (error) {
       console.warn('Favorites API not available, using local storage');
@@ -77,7 +78,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
   const removeFromFavorites = async (productId: string) => {
     try {
-      await axios.delete(`/users/favourites/${productId}`);
+      await axios.delete(API_ENDPOINTS.FAVORITES.REMOVE(productId));
       setFavorites(prev => prev.filter(item => item.productId !== productId));
     } catch (error) {
       console.warn('Favorites API not available, using local storage');

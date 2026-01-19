@@ -31,23 +31,23 @@ export const API_ENDPOINTS = {
     CREATE: '/products',
     UPDATE: (id: string) => `/products/${id}`,
     DELETE: (id: string) => `/products/${id}`,
-    MY_PRODUCTS: '/products/my-products',
+    MY_PRODUCTS: '/products/service-provider/me',
   },
   
   // Cart
   CART: {
-    GET: '/cart',
-    ADD: '/cart',
-    UPDATE: (productId: string) => `/cart/${productId}`,
-    REMOVE: (productId: string) => `/cart/${productId}`,
-    CLEAR: '/cart/clear',
+    GET: '/users/cart',
+    ADD: (productId: string) => `/users/cart/${productId}`,
+    UPDATE: (productId: string) => `/users/cart/${productId}`,
+    REMOVE: (productId: string) => `/users/cart/${productId}`,
+    CLEAR: '/users/cart/clear',
   },
   
   // Favorites
   FAVORITES: {
-    GET: '/favorites',
-    ADD: '/favorites',
-    REMOVE: (productId: string) => `/favorites/${productId}`,
+    GET: '/users/favourites',
+    ADD: (productId: string) => `/users/favourites/${productId}`,
+    REMOVE: (productId: string) => `/users/favourites/${productId}`,
   },
   
   // Users
@@ -64,10 +64,17 @@ export const API_ENDPOINTS = {
     GET_APPLICATIONS: '/admin/service-provider-applications',
     APPROVE_APPLICATION: (id: string) => `/admin/approve-service-provider/${id}`,
     REJECT_APPLICATION: (id: string) => `/admin/reject-service-provider/${id}`,
-    GET_PRODUCTS: '/admin/products',
+    GET_PENDING_PRODUCTS: '/admin/pending-products',
     APPROVE_PRODUCT: (id: string) => `/admin/approve-product/${id}`,
     REJECT_PRODUCT: (id: string) => `/admin/reject-product/${id}`,
     DELETE_PRODUCT: (id: string) => `/admin/products/${id}`,
+  },
+  
+  // Payment & Orders
+  PAYMENT: {
+    CREATE_INTENT: '/payment/create-payment-intent',
+    CONFIRM: '/payment/confirm-payment',
+    ORDERS: '/payment/user-orders',
   },
 };
 

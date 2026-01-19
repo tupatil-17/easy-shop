@@ -4,6 +4,7 @@ import { axios, useAuth } from '../context/AuthContext';
 import ProductCard from '../components/ProductCard';
 import { ChevronLeft, ChevronRight, Sparkles, Clock } from 'lucide-react';
 import { MOCK_PRODUCTS } from '../utils/mockData';
+import { API_ENDPOINTS } from '../config/api';
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -37,7 +38,7 @@ export default function Home() {
   const fetchRecommended = async () => {
     try {
       setRecoLoading(true);
-      const response = await axios.get('/products/recommended');
+      const response = await axios.get(`${API_ENDPOINTS.PRODUCTS.GET_ALL}/recommended`);
       setRecommendedProducts(response.data || []);
     } catch (error) {
       console.error('Error fetching recommended products:', error);
@@ -49,7 +50,7 @@ export default function Home() {
   const fetchLastViewed = async () => {
     try {
       setViewedLoading(true);
-      const response = await axios.get('/products/last-viewed');
+      const response = await axios.get(`${API_ENDPOINTS.PRODUCTS.GET_ALL}/last-viewed`);
       setLastViewedProducts(response.data || []);
     } catch (error) {
       console.error('Error fetching last viewed products:', error);
@@ -75,7 +76,7 @@ export default function Home() {
         params.category = selectedCategory;
       }
 
-      const response = await axios.get('/products', { params });
+      const response = await axios.get(API_ENDPOINTS.PRODUCTS.GET_ALL, { params });
       setProducts(response.data.products || []);
       setTotalPages(response.data.totalPages || 1);
       

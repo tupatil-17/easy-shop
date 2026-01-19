@@ -9,6 +9,7 @@ import { Heart, ShoppingCart, ArrowLeft, Star, MessageSquare } from 'lucide-reac
 import { MOCK_PRODUCT_DETAILS } from '../utils/mockData';
 import StarRating from '../components/StarRating';
 import ReviewModal from '../components/ReviewModal';
+import { API_ENDPOINTS } from '../config/api';
 
 interface Review {
   _id: string;
@@ -43,7 +44,7 @@ export default function ProductDetail() {
 
   const logView = async () => {
     try {
-      await axios.post(`/products/${id}/view`);
+      await axios.post(`${API_ENDPOINTS.PRODUCTS.GET_BY_ID(id!)}/view`);
     } catch (error) {
       console.error('Failed to log view:', error);
     }
@@ -52,7 +53,7 @@ export default function ProductDetail() {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`/products/${id}`);
+      const response = await axios.get(API_ENDPOINTS.PRODUCTS.GET_BY_ID(id!));
       setProduct(response.data);
     } catch (error) {
       console.warn('Product API not available, using mock data');
@@ -67,7 +68,7 @@ export default function ProductDetail() {
 
   const fetchReviews = async () => {
     try {
-      const response = await axios.get(`/products/${id}/reviews`);
+      const response = await axios.get(`${API_ENDPOINTS.PRODUCTS.GET_BY_ID(id!)}/reviews`);
       setReviews(response.data.reviews);
       
       // Check if current user has reviewed

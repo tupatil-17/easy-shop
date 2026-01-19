@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { axios } from '../context/AuthContext';
 import { Package, ChevronRight, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 
 interface OrderItem {
   product: {
@@ -38,7 +39,7 @@ export default function Orders() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/payment/user-orders');
+      const response = await axios.get(API_ENDPOINTS.PAYMENT.ORDERS);
       setOrders(response.data.orders || []);
     } catch (error) {
       console.error('Failed to fetch orders:', error);

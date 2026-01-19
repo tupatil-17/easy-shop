@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 interface Product {
   _id: string;
@@ -43,7 +44,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const fetchCart = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get('/users/cart');
+      const response = await axios.get(API_ENDPOINTS.CART.GET);
       setCart(response.data.cart || []);
     } catch (error) {
       console.error('Failed to fetch cart:', error);
@@ -54,7 +55,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = async (productId: string) => {
     try {
-      await axios.post(`/users/cart/${productId}`);
+      await axios.post(API_ENDPOINTS.CART.ADD(productId));
       await fetchCart();
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to add to cart');
@@ -63,7 +64,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const removeFromCart = async (productId: string) => {
     try {
-      await axios.delete(`/users/cart/${productId}`);
+      await axios.delete(API_ENDPOINTS.CART.REMOVE(productId));
       await fetchCart();
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to remove from cart');

@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -90,7 +91,7 @@ function CheckoutForm() {
         quantity: item.quantity
       }));
 
-      const response = await axios.post('/payment/create-payment-intent', {
+      const response = await axios.post(API_ENDPOINTS.PAYMENT.CREATE_INTENT, {
         items,
         shippingAddress
       });
@@ -129,7 +130,7 @@ function CheckoutForm() {
       if (error) {
         toast.error(error.message);
       } else if (paymentIntent.status === 'succeeded') {
-        await axios.post('/payment/confirm-payment', {
+        await axios.post(API_ENDPOINTS.PAYMENT.CONFIRM, {
           orderId,
           paymentIntentId: paymentIntent.id
         });
