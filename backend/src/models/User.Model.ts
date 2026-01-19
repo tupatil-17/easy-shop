@@ -7,8 +7,6 @@ export interface IUser extends Document {
   role: "user" | "service_provider" | "admin";
   address?: string;
   isEmailVerified: boolean;
-  emailOTP?: string;
-  otpExpiry?: Date;
 
   serviceProviderApplication: "none" | "pending" | "approved" | "rejected";
 
@@ -56,15 +54,7 @@ const UserSchema: Schema<IUser> = new Schema(
 
     isEmailVerified: {
       type: Boolean,
-      default: false,
-    },
-
-    emailOTP: {
-      type: String,
-    },
-
-    otpExpiry: {
-      type: Date,
+      default: true,
     },
 
     role: {
