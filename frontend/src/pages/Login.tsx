@@ -3,16 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
-import OTPVerification from '../components/OTPVerification';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showOTP, setShowOTP] = useState(false);
-  const [userId, setUserId] = useState('');
-  const { login, completeAuth } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,39 +22,15 @@ export default function Login() {
 
     try {
       setLoading(true);
-      const response = await login(email, password);
-      
-      setUserId(response.userId);
-      setShowOTP(true);
-      toast.success('OTP sent to your email!');
+      await login(email, password);
+      toast.success('Login successful!');
+      navigate('/');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
     }
   };
-
-  const handleOTPSuccess = (data: any) => {
-    completeAuth(data);
-    navigate('/');
-  };
-
-  const handleBackToLogin = () => {
-    setShowOTP(false);
-    setUserId('');
-  };
-
-  if (showOTP) {
-    return (
-      <OTPVerification
-        userId={userId}
-        email={email}
-        type="login"
-        onSuccess={handleOTPSuccess}
-        onBack={handleBackToLogin}
-      />
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

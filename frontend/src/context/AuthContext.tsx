@@ -93,7 +93,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await axios.post(API_ENDPOINTS.AUTH.LOGIN, { email, password });
       console.log('Login response:', response.data);
       
-      // Login now returns userId for OTP verification
+      if (response.data.accessToken) {
+        completeAuth(response.data);
+      }
+      
       return response.data;
     } catch (error: any) {
       console.error('Login error details:', {
@@ -114,7 +117,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await axios.post(API_ENDPOINTS.AUTH.REGISTER, userData);
       console.log('Registration response:', response.data);
       
-      // Registration now returns userId for OTP verification
+      if (response.data.accessToken) {
+        completeAuth(response.data);
+      }
+      
       return response.data;
     } catch (error: any) {
       console.error('Registration error details:', {

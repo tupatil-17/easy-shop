@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
-import OTPVerification from '../components/OTPVerification';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -14,9 +13,7 @@ export default function Register() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showOTP, setShowOTP] = useState(false);
-  const [userId, setUserId] = useState('');
-  const { register, completeAuth } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,44 +46,21 @@ export default function Register() {
 
     try {
       setLoading(true);
-      const response = await register({
+      await register({
         username: formData.username,
         email: formData.email,
         password: formData.password,
         role: 'user'
       });
       
-      setUserId(response.userId);
-      setShowOTP(true);
-      toast.success('Registration successful! Please check your email for OTP.');
+      toast.success('Registration successful!');
+      navigate('/');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
   };
-
-  const handleOTPSuccess = (data: any) => {
-    completeAuth(data);
-    navigate('/');
-  };
-
-  const handleBackToRegister = () => {
-    setShowOTP(false);
-    setUserId('');
-  };
-
-  if (showOTP) {
-    return (
-      <OTPVerification
-        userId={userId}
-        email={formData.email}
-        type="register"
-        onSuccess={handleOTPSuccess}
-        onBack={handleBackToRegister}
-      />
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

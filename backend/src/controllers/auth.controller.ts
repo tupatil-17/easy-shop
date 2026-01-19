@@ -7,7 +7,6 @@ import {
   verifyRefreshToken,
   verifyAccessToken,
 } from "../utils/Jwt";
-import { sendOTPEmail, generateOTP } from "../utils/email";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -23,97 +22,40 @@ export const register = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await hashPassword(password);
-    const otp = generateOTP();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
     const newUser = await User.create({
       username,
       email,
       password: hashedPassword,
       role: "user",
-      emailOTP: otp,
-      otpExpiry,
-      isEmailVerified: false,
+      isEmailVerified: true,
     });
 
-    try {
-      await sendOTPEmail(email, otp, 'register');
-    } catch (emailError) {
-      console.error("Failed to send registration OTP email:", emailError);
-      return res.status(500).json({ 
-        message: "User created but failed to send verification email. Please try to login to resend OTP.",
-        userId: newUser._id
-      });
-    }
+    const accessToken = generateAccessToken({
+      userId: newUser._id.toString(),
+      role: newUser.role as any,
+    });
+
+    const refreshToken = generateRefreshToken({
+      userId: newUser._id.toString(),
+      role: newUser.role as any,
+    });
 
     return res.status(201).json({
-      message: "Registration successful. Please verify your email with the OTP sent.",
-      userId: newUser._id,
+      message: "Registration successful",
+      accessToken,
+      refreshToken,
+      user: {
+        _id: newUser._id,
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+        role: newUser.role,
+      },
     });
   } catch (error) {
     console.error("Registration error:", error);
     return res.status(500).json({ message: "Registration failed" });
-  }
-};
-
-export const verifyEmail = async (req: Request, res: Response) => {
-  try {
-    const { userId, otp } = req.body;
-
-    if (!userId || !otp) {
-      return res.status(400).json({ message: "User ID and OTP are required" });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (user.isEmailVerified) {
-      return res.status(400).json({ message: "Email already verified" });
-    }
-
-    if (!user.emailOTP || !user.otpExpiry) {
-      return res.status(400).json({ message: "No OTP found" });
-    }
-
-    if (user.otpExpiry < new Date()) {
-      return res.status(400).json({ message: "OTP expired" });
-    }
-
-    if (user.emailOTP !== otp) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    user.isEmailVerified = true;
-    (user as any).emailOTP = undefined;
-    (user as any).otpExpiry = undefined;
-    await user.save();
-
-    const accessToken = generateAccessToken({
-      userId: user._id.toString(),
-      role: user.role as any,
-    });
-
-    const refreshToken = generateRefreshToken({
-      userId: user._id.toString(),
-      role: user.role as any,
-    });
-
-    return res.status(200).json({
-      message: "Email verified successfully",
-      accessToken,
-      refreshToken,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-      },
-    });
-  } catch (error) {
-    console.error("Email verification error:", error);
-    return res.status(500).json({ message: "Email verification failed" });
   }
 };
 
@@ -130,72 +72,10 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    if (!user.isEmailVerified && user.role !== "admin") {
-      return res.status(400).json({ message: "Please verify your email first" });
-    }
-
     const isPasswordValid = await comparePassword(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-
-    const otp = generateOTP();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
-
-    user.emailOTP = otp;
-    user.otpExpiry = otpExpiry;
-    await user.save();
-
-    try {
-      await sendOTPEmail(email, otp, 'login');
-    } catch (emailError) {
-      console.error("Failed to send login OTP email:", emailError);
-      // We don't return 500 here so the user can at least see what happened 
-      // or we can handle it differently. But for now, let's see the error in logs.
-      return res.status(500).json({ 
-        message: "Failed to send OTP email. Please check your email configuration.",
-        error: process.env.NODE_ENV === 'development' ? emailError : undefined
-      });
-    }
-
-    return res.status(200).json({
-      message: "OTP sent to your email. Please verify to complete login.",
-      userId: user._id,
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-    return res.status(500).json({ message: "Login failed" });
-  }
-};
-
-export const verifyLoginOTP = async (req: Request, res: Response) => {
-  try {
-    const { userId, otp } = req.body;
-
-    if (!userId || !otp) {
-      return res.status(400).json({ message: "User ID and OTP are required" });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!user.emailOTP || !user.otpExpiry) {
-      return res.status(400).json({ message: "No OTP found" });
-    }
-
-    if (user.otpExpiry < new Date()) {
-      return res.status(400).json({ message: "OTP expired" });
-    }
-
-    if (user.emailOTP !== otp) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    (user as any).emailOTP = undefined;
-    (user as any).otpExpiry = undefined;
-    await user.save();
 
     const accessToken = generateAccessToken({
       userId: user._id.toString(),
@@ -212,6 +92,7 @@ export const verifyLoginOTP = async (req: Request, res: Response) => {
       accessToken,
       refreshToken,
       user: {
+        _id: user._id,
         id: user._id,
         username: user.username,
         email: user.email,
@@ -219,8 +100,8 @@ export const verifyLoginOTP = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error("Login OTP verification error:", error);
-    return res.status(500).json({ message: "Login verification failed" });
+    console.error("Login error:", error);
+    return res.status(500).json({ message: "Login failed" });
   }
 };
 
