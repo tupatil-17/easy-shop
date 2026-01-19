@@ -6,7 +6,7 @@ import Product from "../models/Product.Model.ts";
 import type { AuthRequest } from "../middleware/auth.middleware.ts";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-12-18.acacia",
+  apiVersion: "2025-12-15.clover" as any,
 });
 
 export const createPaymentIntent = async (req: AuthRequest, res: Response) => {

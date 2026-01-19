@@ -78,8 +78,8 @@ export const verifyEmail = async (req: Request, res: Response) => {
     }
 
     user.isEmailVerified = true;
-    user.emailOTP = undefined;
-    user.otpExpiry = undefined;
+    (user as any).emailOTP = undefined;
+    (user as any).otpExpiry = undefined;
     await user.save();
 
     const accessToken = generateAccessToken({
@@ -175,8 +175,8 @@ export const verifyLoginOTP = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
-    user.emailOTP = undefined;
-    user.otpExpiry = undefined;
+    (user as any).emailOTP = undefined;
+    (user as any).otpExpiry = undefined;
     await user.save();
 
     const accessToken = generateAccessToken({
@@ -214,6 +214,9 @@ export const getCurrentUser = async (req: Request, res: Response) => {
     }
 
     const token = authHeader.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     const decoded = verifyAccessToken(token);
 
     const user = await User.findById(decoded.userId).select("-password");

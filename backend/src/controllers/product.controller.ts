@@ -46,7 +46,7 @@ export const getProductById = async (req: Request, res: Response) => {
     const product = await Product.findOne({
       _id: req.params.id,
       status: "approved",
-    }).populate("serviceProviderId", "username email");
+    } as any).populate("serviceProviderId", "username email");
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -120,7 +120,7 @@ export const updateProduct = async (req: AuthRequest, res: Response) => {
     const product = await Product.findOne({
       _id: req.params.id,
       serviceProviderId: req.user!.userId,
-    });
+    } as any);
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -161,7 +161,7 @@ export const deleteProduct = async (req: AuthRequest, res: Response) => {
     const product = await Product.findOneAndDelete({
       _id: req.params.id,
       serviceProviderId: req.user!.userId,
-    });
+    } as any);
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -192,7 +192,7 @@ export const logProductView = async (req: AuthRequest, res: Response) => {
     user.lastViewedProducts = user.lastViewedProducts.filter(
       (id) => id.toString() !== productId
     );
-    (user.lastViewedProducts as any).unshift(new Types.ObjectId(productId));
+    (user.lastViewedProducts as any).unshift(new Types.ObjectId(productId as string));
     // Limit to 10
     if (user.lastViewedProducts.length > 10) {
       user.lastViewedProducts.pop();

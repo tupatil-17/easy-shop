@@ -27,7 +27,7 @@ export const addReview = async (req: AuthRequest, res: Response) => {
     }
 
     // Check if user already reviewed this product
-    const existingReview = await Review.findOne({ userId, productId });
+    const existingReview = await Review.findOne({ userId, productId } as any);
     if (existingReview) {
       return res.status(400).json({ message: "You have already reviewed this product" });
     }
@@ -38,12 +38,12 @@ export const addReview = async (req: AuthRequest, res: Response) => {
       productId,
       rating,
       comment,
-    });
+    } as any);
 
     // Update product rating
-    await updateProductRating(productId);
+    await updateProductRating(productId as string);
 
-    const populatedReview = await Review.findById(review._id)
+    const populatedReview = await Review.findById((review as any)._id)
       .populate("userId", "username")
       .populate("productId", "name");
 
@@ -64,13 +64,13 @@ export const getProductReviews = async (req: AuthRequest, res: Response) => {
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
 
-    const reviews = await Review.find({ productId })
+    const reviews = await Review.find({ productId } as any)
       .populate("userId", "username")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    const totalReviews = await Review.countDocuments({ productId });
+    const totalReviews = await Review.countDocuments({ productId } as any);
 
     res.status(200).json({
       reviews,
@@ -123,7 +123,7 @@ export const getUserPurchasedProducts = async (req: AuthRequest, res: Response) 
 
 const updateProductRating = async (productId: string) => {
   try {
-    const reviews = await Review.find({ productId });
+    const reviews = await Review.find({ productId } as any);
     const totalReviews = reviews.length;
     const averageRating = totalReviews > 0 
       ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews 
