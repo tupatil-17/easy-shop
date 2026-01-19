@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 // Test API connection
 export const testAPI = async () => {
@@ -13,7 +14,7 @@ export const testAPI = async () => {
       password: 'Test1234'
     };
     
-    const response = await axios.post(`${API_URL}/auth/register`, testData, {
+    const response = await axios.post(`${API_URL}${API_ENDPOINTS.AUTH.REGISTER}`, testData, {
       headers: {
         'Content-Type': 'application/json'
       },

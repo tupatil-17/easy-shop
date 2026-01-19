@@ -11,9 +11,9 @@ const router = Router();
 router.post("/register", zodValidate(registerSchema), register);
 router.post("/verify-email", verifyEmail);
 router.post("/login", zodValidate(loginSchema), login);
-router.post("/verify-login", verifyLoginOTP);
+router.post("/verify-login-otp", verifyLoginOTP);
 router.post("/logout", logout);
-router.post("/refresh-token", refreshAccessToken);
+router.post("/refresh", refreshAccessToken);
 router.get("/me", getCurrentUser);
 
 export default router;

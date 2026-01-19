@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 interface OTPVerificationProps {
   userId: string;
@@ -24,7 +25,7 @@ export default function OTPVerification({ userId, email, type, onSuccess, onBack
 
     try {
       setLoading(true);
-      const endpoint = type === 'register' ? '/auth/verify-email' : '/auth/verify-login';
+      const endpoint = type === 'register' ? API_ENDPOINTS.AUTH.VERIFY_EMAIL : API_ENDPOINTS.AUTH.VERIFY_LOGIN;
       const response = await axios.post(endpoint, { userId, otp });
       
       toast.success(response.data.message);

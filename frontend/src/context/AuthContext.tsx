@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 interface User {
   _id: string;
@@ -45,7 +46,7 @@ axios.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const refreshTokenVal = localStorage.getItem('refreshToken');
-        const response = await axios.post('/auth/refresh-token', { refreshToken: refreshTokenVal });
+        const response = await axios.post(API_ENDPOINTS.AUTH.REFRESH, { refreshToken: refreshTokenVal });
         const { accessToken } = response.data;
         localStorage.setItem('accessToken', accessToken);
         axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
@@ -72,7 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const token = localStorage.getItem('accessToken');
       if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        const response = await axios.get('/auth/me');
+        const response = await axios.get(API_ENDPOINTS.AUTH.ME);
         setUser(response.data.user);
       }
     } catch (error) {
@@ -89,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('Attempting login with email:', email);
       console.log('API Base URL:', API_BASE_URL);
       
-      const response = await axios.post('/auth/login', { email, password });
+      const response = await axios.post(API_ENDPOINTS.AUTH.LOGIN, { email, password });
       console.log('Login response:', response.data);
       
       // Login now returns userId for OTP verification
@@ -110,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('Attempting registration with:', { ...userData, password: '[HIDDEN]' });
       console.log('API Base URL:', API_BASE_URL);
       
-      const response = await axios.post('/auth/register', userData);
+      const response = await axios.post(API_ENDPOINTS.AUTH.REGISTER, userData);
       console.log('Registration response:', response.data);
       
       // Registration now returns userId for OTP verification
@@ -128,7 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      await axios.post('/auth/logout');
+      await axios.post(API_ENDPOINTS.AUTH.LOGOUT);
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -141,7 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshToken = async () => {
     const refreshTokenVal = localStorage.getItem('refreshToken');
-    const response = await axios.post('/auth/refresh-token', { refreshToken: refreshTokenVal });
+    const response = await axios.post(API_ENDPOINTS.AUTH.REFRESH, { refreshToken: refreshTokenVal });
     const { accessToken } = response.data;
     localStorage.setItem('accessToken', accessToken);
     axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;

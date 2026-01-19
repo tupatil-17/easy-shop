@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { axios } from '../context/AuthContext';
 import { toast } from 'sonner';
 import { User, Mail, Edit2, Save, X, ShieldCheck } from 'lucide-react';
+import { API_ENDPOINTS } from '../config/api';
 
 export default function Profile() {
   const { user, updateUser } = useAuth();
@@ -16,7 +17,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('/auth/me');
+        const response = await axios.get(API_ENDPOINTS.AUTH.ME);
         if (response.data.user) {
           updateUser(response.data.user);
         }
@@ -43,7 +44,7 @@ export default function Profile() {
 
   const handleSave = async () => {
     try {
-      const response = await axios.put('/users/profile', formData);
+      const response = await axios.put(API_ENDPOINTS.USERS.UPDATE_PROFILE, formData);
       updateUser(response.data.user);
       setIsEditing(false);
       toast.success('Profile updated successfully!');
