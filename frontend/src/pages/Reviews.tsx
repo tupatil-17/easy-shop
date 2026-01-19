@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Star, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
-import axios from 'axios';
+import { axios } from '../context/AuthContext';
 import ReviewModal from '../components/ReviewModal';
 import StarRating from '../components/StarRating';
 

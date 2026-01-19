@@ -1,15 +1,11 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
-import axios from 'axios';
+import { axios, useAuth } from '../context/AuthContext';
 import StarRating from './StarRating';
-import { API_CONFIG } from '../config/api';
 
 // Configure axios with base URL
-const api = axios.create({
-  baseURL: API_CONFIG.BASE_URL,
-  withCredentials: API_CONFIG.WITH_CREDENTIALS,
-});
+const api = axios;
 
 interface ReviewModalProps {
   isOpen: boolean;

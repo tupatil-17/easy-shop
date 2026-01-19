@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useAuth } from './AuthContext';
-import axios from 'axios';
+import { useAuth, axios } from './AuthContext';
 import { API_ENDPOINTS } from '../config/api';
 
 interface Product {
