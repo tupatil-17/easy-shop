@@ -36,7 +36,15 @@ export const register = async (req: Request, res: Response) => {
       isEmailVerified: false,
     });
 
-    await sendOTPEmail(email, otp, 'register');
+    try {
+      await sendOTPEmail(email, otp, 'register');
+    } catch (emailError) {
+      console.error("Failed to send registration OTP email:", emailError);
+      return res.status(500).json({ 
+        message: "User created but failed to send verification email. Please try to login to resend OTP.",
+        userId: newUser._id
+      });
+    }
 
     return res.status(201).json({
       message: "Registration successful. Please verify your email with the OTP sent.",
@@ -138,7 +146,17 @@ export const login = async (req: Request, res: Response) => {
     user.otpExpiry = otpExpiry;
     await user.save();
 
-    await sendOTPEmail(email, otp, 'login');
+    try {
+      await sendOTPEmail(email, otp, 'login');
+    } catch (emailError) {
+      console.error("Failed to send login OTP email:", emailError);
+      // We don't return 500 here so the user can at least see what happened 
+      // or we can handle it differently. But for now, let's see the error in logs.
+      return res.status(500).json({ 
+        message: "Failed to send OTP email. Please check your email configuration.",
+        error: process.env.NODE_ENV === 'development' ? emailError : undefined
+      });
+    }
 
     return res.status(200).json({
       message: "OTP sent to your email. Please verify to complete login.",
