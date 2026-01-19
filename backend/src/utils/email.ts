@@ -1,36 +1,21 @@
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+// backend/src/utils/email.ts
 
 export const sendOTPEmail = async (
   email: string,
   otp: string,
-  type: "register" | "login"
+  type: 'register' | 'login'
 ) => {
-  const subject =
-    type === "register"
-      ? "Verify Your Email - Easy Shop"
-      : "Login OTP - Easy Shop";
+  if (process.env.DEV_MODE === 'true') {
+    console.log('======================================');
+    console.log('OTP GENERATED (DEV MODE)');
+    console.log('Email:', email);
+    console.log('Type:', type);
+    console.log('OTP:', otp);
+    console.log('======================================');
+    return;
+  }
 
-  const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #e91e63;">Easy Shop</h2>
-      <h3>${type === "register" ? "Email Verification" : "Login Verification"}</h3>
-      <p>Your OTP code is:</p>
-      <div style="background: #f5f5f5; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; color: #e91e63;">
-        ${otp}
-      </div>
-      <p>This OTP will expire in 10 minutes.</p>
-      <p>If you didn't request this, please ignore this email.</p>
-    </div>
-  `;
-
-  await resend.emails.send({
-    from: process.env.EMAIL_FROM!,
-    to: email,
-    subject,
-    html,
-  });
+  throw new Error('Email service not configured');
 };
 
 export const generateOTP = (): string => {
