@@ -1,4 +1,4 @@
-import cloudinary from "../config/cloudinary.ts";
+import cloudinary from "../config/cloudinary";
 import fs from "fs";
 
 export const uploadToCloudinary = async (filePath: string, folder: string) => {

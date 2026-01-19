@@ -1,8 +1,8 @@
 import type { Response } from "express";
-import Review from "../models/Review.Model.ts";
-import Product from "../models/Product.Model.ts";
-import Order from "../models/Order.Model.ts";
-import type { AuthRequest } from "../middleware/auth.middleware.ts";
+import Review from "../models/Review.Model";
+import Product from "../models/Product.Model";
+import Order from "../models/Order.Model";
+import type { AuthRequest } from "../middleware/auth.middleware";
 
 export const addReview = async (req: AuthRequest, res: Response) => {
   try {

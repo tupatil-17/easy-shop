@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { login, register, logout, refreshAccessToken, getCurrentUser, verifyEmail, verifyLoginOTP } from "../controllers/auth.controller.ts";
-import { zodValidate } from "../middleware/validate.middleware.ts";
+import { login, register, logout, refreshAccessToken, getCurrentUser, verifyEmail, verifyLoginOTP } from "../controllers/auth.controller";
+import { zodValidate } from "../middleware/validate.middleware";
 import {
   registerSchema,
   loginSchema,
-} from "../validators/user.validators.ts";
+} from "../validators/user.validators";
 
 const router = Router();
 

@@ -1,9 +1,9 @@
 import type { Response } from "express";
 import Stripe from "stripe";
-import Order from "../models/Order.Model.ts";
-import User from "../models/User.Model.ts";
-import Product from "../models/Product.Model.ts";
-import type { AuthRequest } from "../middleware/auth.middleware.ts";
+import Order from "../models/Order.Model";
+import User from "../models/User.Model";
+import Product from "../models/Product.Model";
+import type { AuthRequest } from "../middleware/auth.middleware";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-12-15.clover" as any,

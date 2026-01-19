@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import User from "../models/User.Model.ts";
-import Product from "../models/Product.Model.ts";
+import User from "../models/User.Model";
+import Product from "../models/Product.Model";
 
 export const getServiceProviderApplications = async (_req: Request, res: Response) => {
   try {

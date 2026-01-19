@@ -9,11 +9,11 @@ import {
   approveProduct,
   rejectProduct,
   deleteProduct,
-} from "../controllers/admin.controller.ts";
+} from "../controllers/admin.controller";
 
-import { authenticate } from "../middleware/auth.middleware.ts";
-import { authorizeRoles } from "../middleware/role.middleware.ts";
-import { validateObjectId } from "../middleware/validate.middleware.ts";
+import { authenticate } from "../middleware/auth.middleware";
+import { authorizeRoles } from "../middleware/role.middleware";
+import { validateObjectId } from "../middleware/validate.middleware";
 
 const router = Router();
 

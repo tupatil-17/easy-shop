@@ -9,12 +9,12 @@ import {
   logProductView,
   getRecommendedProducts,
   getLastViewedProducts,
-} from "../controllers/product.controller.ts";
+} from "../controllers/product.controller";
 
-import { authenticate, optionalAuthenticate } from "../middleware/auth.middleware.ts";
-import { authorizeRoles } from "../middleware/role.middleware.ts";
-import { validateObjectId } from "../middleware/validate.middleware.ts";
-import { upload } from "../middleware/upload.middleware.ts";
+import { authenticate, optionalAuthenticate } from "../middleware/auth.middleware";
+import { authorizeRoles } from "../middleware/role.middleware";
+import { validateObjectId } from "../middleware/validate.middleware";
+import { upload } from "../middleware/upload.middleware";
 
 const router = Router();
 

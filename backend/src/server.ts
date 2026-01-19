@@ -3,14 +3,14 @@ dotenv.config();
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
-import connectDB from './config/database.ts';
-import { createDefaultAdmin } from './utils/createAdmin.ts';
-import authRoutes from './routes/auth.routes.ts';
-import userRoutes from './routes/user.routes.ts';
-import productRoutes from './routes/product.routes.ts';
-import adminRoutes from './routes/admin.routes.ts';
-import paymentRoutes from './routes/payment.routes.ts';
-import reviewRoutes from './routes/review.routes.ts';
+import connectDB from './config/database';
+import { createDefaultAdmin } from './utils/createAdmin';
+import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import productRoutes from './routes/product.routes';
+import adminRoutes from './routes/admin.routes';
+import paymentRoutes from './routes/payment.routes';
+import reviewRoutes from './routes/review.routes';
 const app = express();
 
 const startServer = async () => {

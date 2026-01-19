@@ -1,13 +1,13 @@
 import type { Request, Response } from "express";
-import User from "../models/User.Model.ts";
-import { hashPassword, comparePassword } from "../utils/Hash.ts";
+import User from "../models/User.Model";
+import { hashPassword, comparePassword } from "../utils/Hash";
 import {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
   verifyAccessToken,
-} from "../utils/Jwt.ts";
-import { sendOTPEmail, generateOTP } from "../utils/email.ts";
+} from "../utils/Jwt";
+import { sendOTPEmail, generateOTP } from "../utils/email";
 
 export const register = async (req: Request, res: Response) => {
   try {

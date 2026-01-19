@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
-import Product from "../models/Product.Model.ts";
-import User from "../models/User.Model.ts";
-import type { AuthRequest } from "../middleware/auth.middleware.ts";
-import { uploadToCloudinary } from "../utils/cloudinary.ts";
+import Product from "../models/Product.Model";
+import User from "../models/User.Model";
+import type { AuthRequest } from "../middleware/auth.middleware";
+import { uploadToCloudinary } from "../utils/cloudinary";
 
 
 export const getAllProducts = async (req: Request, res: Response) => {

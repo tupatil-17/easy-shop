@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { createPaymentIntent, confirmPayment, getUserOrders } from "../controllers/payment.controller.ts";
-import { authenticate } from "../middleware/auth.middleware.ts";
-import { zodValidate } from "../middleware/validate.middleware.ts";
-import { shippingAddressSchema } from "../validators/payment.validators.ts";
+import { createPaymentIntent, confirmPayment, getUserOrders } from "../controllers/payment.controller";
+import { authenticate } from "../middleware/auth.middleware";
+import { zodValidate } from "../middleware/validate.middleware";
+import { shippingAddressSchema } from "../validators/payment.validators";
 
 const router = Router();
 

@@ -1,5 +1,5 @@
-import User from "../models/User.Model.ts";
-import { hashPassword } from "./Hash.ts";
+import User from "../models/User.Model";
+import { hashPassword } from "./Hash";
 
 export const createDefaultAdmin = async () => {
   try {

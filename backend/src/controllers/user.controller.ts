@@ -1,8 +1,8 @@
 import type { Response } from "express";
 import { Types } from "mongoose";
-import User from "../models/User.Model.ts";
-import Product from "../models/Product.Model.ts";
-import type { AuthRequest } from "../middleware/auth.middleware.ts";
+import User from "../models/User.Model";
+import Product from "../models/Product.Model";
+import type { AuthRequest } from "../middleware/auth.middleware";
 
 export const getUserProfile = async (req: AuthRequest, res: Response) => {
   try {

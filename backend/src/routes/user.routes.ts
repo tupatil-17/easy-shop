@@ -9,17 +9,17 @@ import {
   getFavourites,
   addToFavourites,
   removeFromFavourites,
-} from "../controllers/user.controller.ts";
+} from "../controllers/user.controller";
 
-import { authMiddleware } from "../middleware/auth.middleware.ts";
-import { authorizeRoles } from "../middleware/role.middleware.ts";
-import { upload } from "../middleware/upload.middleware.ts";
-import { validateObjectId } from "../middleware/validate.middleware.ts";
-import { zodValidate } from "../middleware/validate.middleware.ts";
+import { authMiddleware } from "../middleware/auth.middleware";
+import { authorizeRoles } from "../middleware/role.middleware";
+import { upload } from "../middleware/upload.middleware";
+import { validateObjectId } from "../middleware/validate.middleware";
+import { zodValidate } from "../middleware/validate.middleware";
 import {
   applyServiceProviderSchema,
   productIdParamSchema,
-} from "../validators/user.validators.ts";
+} from "../validators/user.validators";
 
 const router = Router();
 

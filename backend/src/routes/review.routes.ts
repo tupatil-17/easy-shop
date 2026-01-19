@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { addReview, getProductReviews, getUserPurchasedProducts } from "../controllers/review.controller.ts";
-import { authMiddleware } from "../middleware/auth.middleware.ts";
-import { authorizeRoles } from "../middleware/role.middleware.ts";
+import { addReview, getProductReviews, getUserPurchasedProducts } from "../controllers/review.controller";
+import { authMiddleware } from "../middleware/auth.middleware";
+import { authorizeRoles } from "../middleware/role.middleware";
 
 const router = Router();
 
