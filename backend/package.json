@@ -2,28 +2,27 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node src/server.ts",
     "build": "tsc",
-    "start": "ts-node src/server.ts"
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/helmet": "^0.0.48",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^25.0.8",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^25.0.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@types/multer": "^2.0.0",
     "@types/nodemailer": "^7.0.5",
     "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.3",
