@@ -1,11 +1,15 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   allowedRoles?: string[];
 }
 
+/**
+ * ProtectedRoute component that handles authentication and role-based access.
+ * Can be used as a wrapper or as a layout route (via <Outlet />).
+ */
 export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading, user } = useAuth();
 
@@ -25,5 +29,7 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
     return <Navigate to="/" replace />;
   }
 
-  return <>{children}</>;
+  // Support both children (wrapped component) and Outlet (nested routes)
+  return children ? <>{children}</> : <Outlet />;
 }
+

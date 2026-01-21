@@ -5,6 +5,7 @@ import {
   applyForServiceProvider,
   getCart,
   addToCart,
+  updateCartQuantity,
   removeFromCart,
   getFavourites,
   addToFavourites,
@@ -66,6 +67,14 @@ router.post(
   validateObjectId("productId"),
   zodValidate(productIdParamSchema),
   addToCart
+);
+
+router.put(
+  "/cart/:productId",
+  authMiddleware,
+  authorizeRoles("user", "service_provider", "admin"),
+  validateObjectId("productId"),
+  updateCartQuantity
 );
 
 router.delete(

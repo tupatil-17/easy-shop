@@ -4,7 +4,10 @@ import { z } from "zod";
 const email = z
   .string()
   .email("Invalid email address")
-  .max(100, "Email too long");
+  .refine((email) => email.endsWith("@gmail.com"), {
+      message: "Email must end with @gmail.com",
+    })
+    .max(100, "Email too long");
 
 const username = z
   .string()
@@ -16,7 +19,7 @@ const password = z
   .string()
   .min(8, "Password must be at least 8 characters")
   .max(50, "Password too long")
-  .regex(
+  .regex(              //match pattern
     /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/,
     "Password must contain uppercase, lowercase and a number"
   );

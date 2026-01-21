@@ -168,6 +168,43 @@ export const addToCart = async (req: AuthRequest, res: Response) => {
   }
 };
 
+export const updateCartQuantity = async (req: AuthRequest, res: Response) => {
+  try {
+    const { productId } = req.params;
+    const { quantity } = req.body;
+
+    if (quantity < 1) {
+      return res.status(400).json({ message: "Quantity must be at least 1" });
+    }
+
+    const user = await User.findById(req.user?.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const itemIndex = user.cart.findIndex(
+      (item) => item.product.toString() === productId
+    );
+
+    if (itemIndex === -1) {
+      return res.status(404).json({ message: "Product not in cart" });
+    }
+
+    const product = await Product.findById(productId);
+    if (product && product.stock < quantity) {
+      return res.status(400).json({ message: "Requested quantity exceeds available stock" });
+    }
+
+    user.cart[itemIndex].quantity = quantity;
+    await user.save();
+
+    return res.status(200).json({ message: "Cart updated successfully", cart: user.cart });
+  } catch (error) {
+    console.error('Update cart quantity error:', error);
+    return res.status(500).json({ message: "Failed to update cart quantity" });
+  }
+};
+
 export const removeFromCart = async (req: AuthRequest, res: Response) => {
   try {
     const { productId } = req.params;

@@ -24,6 +24,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -32,9 +33,18 @@ export default function ProductCard({ product }: ProductCardProps) {
       return;
     }
     
+    // Convert current product to context Product type
+    const cartProduct = {
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      images: product.images || [product.image || ''],
+      stock: product.stock || 0
+    };
+
     try {
       setIsAddingToCart(true);
-      await addToCart(product._id);
+      await addToCart(cartProduct);
       toast.success('Added to cart!');
     } catch (error) {
       toast.error('Failed to add to cart');
@@ -50,7 +60,10 @@ export default function ProductCard({ product }: ProductCardProps) {
       return;
     }
 
+    if (isTogglingFavorite) return;
+
     try {
+      setIsTogglingFavorite(true);
       if (isFavorite(product._id)) {
         await removeFromFavorites(product._id);
         toast.success('Removed from wishlist');
@@ -60,6 +73,8 @@ export default function ProductCard({ product }: ProductCardProps) {
       }
     } catch (error) {
       toast.error('Failed to update wishlist');
+    } finally {
+      setIsTogglingFavorite(false);
     }
   };
 
@@ -74,10 +89,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           />
           <button
             onClick={handleToggleFavorite}
-            className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:shadow-lg transition"
+            disabled={isTogglingFavorite}
+            className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:shadow-lg transition disabled:opacity-70"
           >
             <Heart
-              className={`w-5 h-5 ${
+              className={`w-5 h-5 transition-colors ${
                 isFavorite(product._id) ? 'fill-pink-600 text-pink-600' : 'text-gray-600'
               }`}
             />

@@ -17,10 +17,11 @@ interface CartItem {
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (productId: string) => Promise<void>;
+  addToCart: (product: Product) => Promise<void>;
+  updateQuantity: (productId: string, quantity: number) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
   clearCart: () => void;
-  getCartCount: () => number;
+  cartCount: number;
   fetchCart: () => Promise<void>;
   isLoading: boolean;
 }
@@ -29,6 +30,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [cartCount, setCartCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const { user, isAuthenticated } = useAuth();
 
@@ -37,8 +39,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       fetchCart();
     } else {
       setCart([]);
+      setCartCount(0);
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    const count = cart.reduce((total, item) => total + item.quantity, 0);
+    setCartCount(count);
+  }, [cart]);
 
   const fetchCart = async () => {
     try {
@@ -52,39 +60,76 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const addToCart = async (productId: string) => {
+  const addToCart = async (product: Product) => {
+    const previousCart = [...cart];
+    
+    // Optimistic update
+    setCart(prev => {
+      const existingItemIndex = prev.findIndex(item => item.product._id === product._id);
+      if (existingItemIndex > -1) {
+        const newCart = [...prev];
+        newCart[existingItemIndex] = {
+          ...newCart[existingItemIndex],
+          quantity: newCart[existingItemIndex].quantity + 1
+        };
+        return newCart;
+      }
+      return [...prev, { product, quantity: 1 }];
+    });
+
     try {
-      await axios.post(API_ENDPOINTS.CART.ADD(productId));
-      await fetchCart();
+      await axios.post(API_ENDPOINTS.CART.ADD(product._id));
+      // Optionally fetch to sync with server state (e.g. stock changes)
+      // await fetchCart(); 
     } catch (error: any) {
+      setCart(previousCart); // Rollback
       throw new Error(error.response?.data?.message || 'Failed to add to cart');
     }
   };
 
+  const updateQuantity = async (productId: string, quantity: number) => {
+    const previousCart = [...cart];
+
+    // Optimistic update
+    setCart(prev => prev.map(item => 
+      item.product._id === productId ? { ...item, quantity } : item
+    ));
+
+    try {
+      await axios.put(API_ENDPOINTS.CART.UPDATE(productId), { quantity });
+    } catch (error: any) {
+      setCart(previousCart); // Rollback
+      throw new Error(error.response?.data?.message || 'Failed to update quantity');
+    }
+  };
+
   const removeFromCart = async (productId: string) => {
+    const previousCart = [...cart];
+
+    // Optimistic update
+    setCart(prev => prev.filter(item => item.product._id !== productId));
+
     try {
       await axios.delete(API_ENDPOINTS.CART.REMOVE(productId));
-      await fetchCart();
     } catch (error: any) {
+      setCart(previousCart); // Rollback
       throw new Error(error.response?.data?.message || 'Failed to remove from cart');
     }
   };
 
   const clearCart = () => {
     setCart([]);
-  };
-
-  const getCartCount = () => {
-    return cart.reduce((total, item) => total + item.quantity, 0);
+    setCartCount(0);
   };
 
   return (
     <CartContext.Provider value={{
       cart,
       addToCart,
+      updateQuantity,
       removeFromCart,
       clearCart,
-      getCartCount,
+      cartCount,
       fetchCart,
       isLoading
     }}>

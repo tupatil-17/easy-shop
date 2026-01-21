@@ -88,9 +88,19 @@ export default function ProductDetail() {
       return;
     }
 
+    // Format product for context
+    const cartProduct = {
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      images: product.images || [product.image || ''],
+      stock: product.stock || 0
+    };
+
     try {
+      // Optimistically add to cart (sequential but instant in UI)
       for (let i = 0; i < quantity; i++) {
-        await addToCart(product._id);
+        await addToCart(cartProduct);
       }
       toast.success(`Added ${quantity} item(s) to cart!`);
       setQuantity(1);

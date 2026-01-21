@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-dotenv.config();
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -11,6 +10,8 @@ import productRoutes from './routes/product.routes';
 import adminRoutes from './routes/admin.routes';
 import paymentRoutes from './routes/payment.routes';
 import reviewRoutes from './routes/review.routes';
+
+dotenv.config();
 const app = express();
 
 const startServer = async () => {
@@ -24,7 +25,8 @@ const startServer = async () => {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
-  app.use(express.json({ limit: '10mb' }));
+  
+  app.use(express.json({ limit: '10mb' })); 
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
   app.use("/api/auth", authRoutes);

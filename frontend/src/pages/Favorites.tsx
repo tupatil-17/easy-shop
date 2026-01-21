@@ -23,9 +23,17 @@ export default function Favorites() {
     }
   };
 
-  const handleAddToCart = async (product: any) => {
+  const handleAddToCart = async (favoriteItem: any) => {
     try {
-      await addToCart(product.productId);
+      // Map favorite item back to product format for context
+      const cartProduct = {
+        _id: favoriteItem.productId,
+        name: favoriteItem.name,
+        price: favoriteItem.price,
+        images: [favoriteItem.image],
+        stock: 99 // Default for optimistic update
+      };
+      await addToCart(cartProduct);
       toast.success('Added to cart!');
     } catch (error) {
       toast.error('Failed to add to cart');

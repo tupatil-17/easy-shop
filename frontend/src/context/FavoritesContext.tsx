@@ -57,34 +57,42 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
   const addToFavorites = async (product: any) => {
     const productId = product._id || product.id;
+    const previousFavorites = [...favorites];
+    
+    // Optimistic update
+    const newFavorite: FavoriteItem = {
+      id: productId, // Using productId as temporary ID
+      productId: productId,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0] || product.image || 'https://via.placeholder.com/500'
+    };
+    setFavorites(prev => [...prev, newFavorite]);
+
     try {
       await axios.post(API_ENDPOINTS.FAVORITES.ADD(productId));
-      await fetchFavorites();
     } catch (error) {
-      console.warn('Favorites API not available, using local storage');
-      const newFavorite = {
-        id: Date.now().toString(),
-        productId: productId,
-        name: product.name,
-        price: product.price,
-        image: product.images?.[0] || product.image || 'https://via.placeholder.com/500'
-      };
+      console.warn('Favorites API failed, rolling back');
+      setFavorites(previousFavorites);
       
-      const newFavorites = [...favorites, newFavorite];
-      setFavorites(newFavorites);
-      localStorage.setItem('favorites', JSON.stringify(newFavorites));
+      // If it's a network error, maybe try local storage as fallback? 
+      // User requested optimistic + rollback, so we prioritize consistency.
+      throw error;
     }
   };
 
   const removeFromFavorites = async (productId: string) => {
+    const previousFavorites = [...favorites];
+    
+    // Optimistic update
+    setFavorites(prev => prev.filter(item => item.productId !== productId));
+
     try {
       await axios.delete(API_ENDPOINTS.FAVORITES.REMOVE(productId));
-      setFavorites(prev => prev.filter(item => item.productId !== productId));
     } catch (error) {
-      console.warn('Favorites API not available, using local storage');
-      const newFavorites = favorites.filter(item => item.productId !== productId);
-      setFavorites(newFavorites);
-      localStorage.setItem('favorites', JSON.stringify(newFavorites));
+      console.warn('Favorites API failed, rolling back');
+      setFavorites(previousFavorites);
+      throw error;
     }
   };
 

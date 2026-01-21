@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 
 export default function Cart() {
-  const { cart, removeFromCart, fetchCart } = useCart();
+  const { cart, removeFromCart, fetchCart, updateQuantity } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -15,7 +15,14 @@ export default function Cart() {
 
   const handleQuantityChange = async (productId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
-    toast.info('Quantity update feature coming soon!');
+    try {
+      setLoading(true);
+      await updateQuantity(productId, newQuantity);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to update quantity');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRemove = async (productId: string) => {
@@ -75,14 +82,16 @@ export default function Cart() {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => handleQuantityChange(item.product._id, item.quantity - 1)}
-                    className="p-1 border border-gray-300 rounded hover:bg-gray-100"
+                    disabled={loading}
+                    className="p-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
                   <span className="w-8 text-center font-semibold">{item.quantity}</span>
                   <button
                     onClick={() => handleQuantityChange(item.product._id, item.quantity + 1)}
-                    className="p-1 border border-gray-300 rounded hover:bg-gray-100"
+                    disabled={loading}
+                    className="p-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
