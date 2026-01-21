@@ -8,6 +8,8 @@ const storage = new CloudinaryStorage({
     let folder = "products";
     if (file.fieldname === "aadhaarCardPhoto" || file.fieldname === "panCardPhoto") {
       folder = "seller_docs";
+    } else if (file.fieldname === "profilePicture") {
+      folder = "profile_pictures";
     }
     return {
       folder: folder,

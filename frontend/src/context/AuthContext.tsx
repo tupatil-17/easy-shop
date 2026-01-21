@@ -7,6 +7,8 @@ interface User {
   username?: string;
   email: string;
   role: 'user' | 'service_provider' | 'admin';
+  address?: string;
+  profilePicture?: string;
   serviceProviderApplication?: 'none' | 'pending' | 'approved' | 'rejected';
   serviceProviderDetails?: {
     aadhaarNumber: string;

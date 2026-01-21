@@ -7,6 +7,7 @@ interface MobileNavItemProps {
   icon: LucideIcon;
   label: string;
   badgeCount?: number;
+  imageUrl?: string;
   onClick: () => void;
 }
 
@@ -15,6 +16,7 @@ const MobileNavItem: React.FC<MobileNavItemProps> = ({
   icon: Icon, 
   label, 
   badgeCount, 
+  imageUrl,
   onClick 
 }) => {
   return (
@@ -23,7 +25,13 @@ const MobileNavItem: React.FC<MobileNavItemProps> = ({
       onClick={onClick}
       className="flex items-center space-x-3 text-gray-700 hover:text-pink-600 py-2"
     >
-      <Icon className="w-5 h-5" />
+      {imageUrl ? (
+        <div className="w-5 h-5 rounded-full overflow-hidden border border-gray-200">
+          <img src={imageUrl} alt={label} className="w-full h-full object-cover" />
+        </div>
+      ) : (
+        <Icon className="w-5 h-5" />
+      )}
       <span>
         {label}
         {badgeCount !== undefined && badgeCount > 0 && ` (${badgeCount})`}

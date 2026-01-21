@@ -26,6 +26,7 @@ export const getUserProfile = async (req: AuthRequest, res: Response) => {
 export const updateUserProfile = async (req: AuthRequest, res: Response) => {
   try {
     const { username, email, address } = req.body;
+    const profilePicture = req.file?.path;
     const user = await User.findById(req.user?.userId);
 
     if (!user) {
@@ -34,7 +35,13 @@ export const updateUserProfile = async (req: AuthRequest, res: Response) => {
 
     if (username) user.username = username;
     if (email) user.email = email;
-    if (address) user.address = address;
+    if (address) {
+      user.address = address;
+      if (user.serviceProviderDetails) {
+        user.serviceProviderDetails.address = address;
+      }
+    }
+    if (profilePicture) user.profilePicture = profilePicture;
 
     await user.save();
 
@@ -121,7 +128,8 @@ export const getCart = async (req: AuthRequest, res: Response) => {
 export const addToCart = async (req: AuthRequest, res: Response) => {
   try {
     const { productId } = req.params;
-    console.log('Add to cart request:', { productId, userId: req.user?.userId });
+    const { quantity = 1 } = req.body;
+    console.log('Add to cart request:', { productId, quantity, userId: req.user?.userId });
 
     const user = await User.findById(req.user?.userId);
     if (!user) {
@@ -151,11 +159,11 @@ export const addToCart = async (req: AuthRequest, res: Response) => {
     if (itemIndex > -1) {
       const cartItem = user.cart[itemIndex];
       if (cartItem) {
-        cartItem.quantity += 1;
+        cartItem.quantity += quantity;
       }
       console.log('Updated existing cart item quantity');
     } else {
-      user.cart.push({ product: product._id, quantity: 1 });
+      user.cart.push({ product: product._id, quantity });
       console.log('Added new item to cart');
     }
 

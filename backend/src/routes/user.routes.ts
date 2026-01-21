@@ -36,6 +36,7 @@ router.put(
   "/profile",
   authMiddleware,
   authorizeRoles("user", "service_provider", "admin"),
+  upload.single("profilePicture"),
   updateUserProfile
 );
 

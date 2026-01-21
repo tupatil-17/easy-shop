@@ -1,4 +1,5 @@
 import type { Response } from "express";
+import { Types } from "mongoose";
 import Review from "../models/Review.Model";
 import Product from "../models/Product.Model";
 import Order from "../models/Order.Model";
@@ -20,6 +21,14 @@ export const addReview = async (req: AuthRequest, res: Response) => {
 
     if (!comment) {
       return res.status(400).json({ message: "Comment is required" });
+    }
+
+    if (comment.length < 5) {
+      return res.status(400).json({ message: "Comment must be at least 5 characters" });
+    }
+
+    if (comment.length > 500) {
+      return res.status(400).json({ message: "Comment must be less than 500 characters" });
     }
 
     if (rating < 1 || rating > 5) {
@@ -123,16 +132,28 @@ export const getUserPurchasedProducts = async (req: AuthRequest, res: Response) 
 
 const updateProductRating = async (productId: string) => {
   try {
-    const reviews = await Review.find({ productId } as any);
-    const totalReviews = reviews.length;
-    const averageRating = totalReviews > 0 
-      ? reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews 
-      : 0;
+    const stats = await Review.aggregate([
+      { $match: { productId: new Types.ObjectId(productId) } },
+      {
+        $group: {
+          _id: "$productId",
+          averageRating: { $avg: "$rating" },
+          totalReviews: { $sum: 1 },
+        },
+      },
+    ]);
 
-    await Product.findByIdAndUpdate(productId, {
-      averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal
-      totalReviews,
-    });
+    if (stats.length > 0) {
+      await Product.findByIdAndUpdate(productId, {
+        averageRating: Math.round(stats[0].averageRating * 10) / 10,
+        totalReviews: stats[0].totalReviews,
+      });
+    } else {
+      await Product.findByIdAndUpdate(productId, {
+        averageRating: 0,
+        totalReviews: 0,
+      });
+    }
   } catch (error) {
     console.error("Update product rating error:", error);
   }

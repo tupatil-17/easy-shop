@@ -1,17 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { axios } from '../context/AuthContext';
 import { toast } from 'sonner';
-import { User, Mail, Edit2, Save, X, ShieldCheck } from 'lucide-react';
+import { User, Mail, Edit2, Save, X, Camera } from 'lucide-react';
 import { API_ENDPOINTS } from '../config/api';
 
 export default function Profile() {
   const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(user?.profilePicture || null);
   const [formData, setFormData] = useState({
     username: user?.username || '',
     email: user?.email || '',
-    address: user?.address || ''
+    address: user?.address || user?.serviceProviderDetails?.address || ''
   });
 
   useEffect(() => {
@@ -33,8 +36,11 @@ export default function Profile() {
       setFormData({
         username: user.username || '',
         email: user.email || '',
-        address: user.address || ''
+        address: user.address || user.serviceProviderDetails?.address || ''
       });
+      if (user.profilePicture) {
+        setPreviewUrl(user.profilePicture);
+      }
     }
   }, [user]);
 
@@ -42,11 +48,36 @@ export default function Profile() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = async () => {
     try {
-      const response = await axios.put(API_ENDPOINTS.USERS.UPDATE_PROFILE, formData);
+      const submitData = new FormData();
+      submitData.append('username', formData.username);
+      submitData.append('email', formData.email);
+      submitData.append('address', formData.address);
+      if (selectedFile) {
+        submitData.append('profilePicture', selectedFile);
+      }
+
+      const response = await axios.put(API_ENDPOINTS.USERS.UPDATE_PROFILE, submitData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       updateUser(response.data.user);
       setIsEditing(false);
+      setSelectedFile(null);
       toast.success('Profile updated successfully!');
     } catch (error) {
       toast.error('Failed to update profile');
@@ -57,8 +88,10 @@ export default function Profile() {
     setFormData({
       username: user?.username || '',
       email: user?.email || '',
-      address: user?.address || ''
+      address: user?.address || user?.serviceProviderDetails?.address || ''
     });
+    setPreviewUrl(user?.profilePicture || null);
+    setSelectedFile(null);
     setIsEditing(false);
   };
 
@@ -70,8 +103,29 @@ export default function Profile() {
           <div className="bg-gradient-to-r from-pink-600 to-purple-600 px-6 py-8 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
-                  <User className="w-10 h-10 text-pink-600" />
+                <div className="relative group">
+                  <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center overflow-hidden border-4 border-pink-200 shadow-lg">
+                    {previewUrl ? (
+                      <img src={previewUrl} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-12 h-12 text-pink-600" />
+                    )}
+                  </div>
+                  {isEditing && (
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Camera className="w-8 h-8 text-white" />
+                    </button>
+                  )}
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="image/*"
+                  />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold">{user?.username}</h1>
@@ -193,7 +247,7 @@ export default function Profile() {
                 />
               ) : (
                 <p className="text-gray-900">
-                  {user?.serviceProviderDetails?.address || user?.address || 'Not provided'}
+                  {user?.address || user?.serviceProviderDetails?.address || 'Not provided'}
                 </p>
               )}
             </div>

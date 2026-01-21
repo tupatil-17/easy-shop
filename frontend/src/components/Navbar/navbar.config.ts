@@ -3,7 +3,6 @@ import {
   Heart, 
   ShoppingCart, 
   User, 
-  LogOut,
   LucideIcon 
 } from 'lucide-react';
 

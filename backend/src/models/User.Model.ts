@@ -6,6 +6,7 @@ export interface IUser extends Document {
   password: string;
   role: "user" | "service_provider" | "admin";
   address?: string;
+  profilePicture?: string;
   isEmailVerified: boolean;
 
   serviceProviderApplication: "none" | "pending" | "approved" | "rejected";
@@ -49,6 +50,9 @@ const UserSchema: Schema<IUser> = new Schema(
     },
 
     address: {
+      type: String,
+    },
+    profilePicture: {
       type: String,
     },
 

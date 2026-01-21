@@ -16,7 +16,12 @@ export const getAllProducts = async (req: Request, res: Response) => {
     const filter: any = { status: "approved" };
 
     if (category && category !== 'all') filter.category = category;
-    if (search) filter.name = { $regex: search, $options: "i" };
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } }
+      ];
+    }
 
     const totalProducts = await Product.countDocuments(filter);
     const totalPages = Math.ceil(totalProducts / limit);
@@ -77,11 +82,9 @@ export const addProduct = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ message: "At least one image required" });
     }
 
-    const imageUrls: string[] = [];
-    for (const file of files) {
-      const uploadResult = await uploadToCloudinary(file.path, "products");
-      imageUrls.push(uploadResult.secure_url);
-    }
+    const uploadPromises = files.map(file => uploadToCloudinary(file.path, "products"));
+    const uploadResults = await Promise.all(uploadPromises);
+    const imageUrls = uploadResults.map(result => result.secure_url);
 
     const product = await Product.create({
       name,
@@ -135,11 +138,9 @@ export const updateProduct = async (req: AuthRequest, res: Response) => {
 
     const files = req.files as Express.Multer.File[] | undefined;
     if (files && files.length > 0) {
-      const imageUrls: string[] = [];
-      for (const file of files) {
-        const uploadResult = await uploadToCloudinary(file.path, "products");
-        imageUrls.push(uploadResult.secure_url);
-      }
+      const uploadPromises = files.map(file => uploadToCloudinary(file.path, "products"));
+      const uploadResults = await Promise.all(uploadPromises);
+      const imageUrls = uploadResults.map(result => result.secure_url);
       product.images = imageUrls;
     }
 

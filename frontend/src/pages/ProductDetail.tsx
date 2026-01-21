@@ -14,6 +14,7 @@ import { API_ENDPOINTS } from '../config/api';
 interface Review {
   _id: string;
   userId: {
+    _id: string;
     username: string;
   };
   rating: number;
@@ -73,7 +74,7 @@ export default function ProductDetail() {
       
       // Check if current user has reviewed
       const userReview = response.data.reviews.find((review: Review) => 
-        review.userId._id === user?.id
+        review.userId._id === user?._id
       );
       setUserHasReviewed(!!userReview);
     } catch (error) {
@@ -98,10 +99,8 @@ export default function ProductDetail() {
     };
 
     try {
-      // Optimistically add to cart (sequential but instant in UI)
-      for (let i = 0; i < quantity; i++) {
-        await addToCart(cartProduct);
-      }
+      // Add to cart with the selected quantity in one API call
+      await addToCart(cartProduct, quantity);
       toast.success(`Added ${quantity} item(s) to cart!`);
       setQuantity(1);
     } catch (error) {
@@ -160,7 +159,7 @@ export default function ProductDetail() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-6"
+          className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-6 cursor-pointer"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Back</span>
@@ -224,14 +223,14 @@ export default function ProductDetail() {
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100"
+                    className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 cursor-pointer"
                   >
                     -
                   </button>
                   <span className="text-lg font-semibold w-12 text-center">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100"
+                    className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 cursor-pointer"
                   >
                     +
                   </button>
@@ -242,14 +241,14 @@ export default function ProductDetail() {
               <div className="flex space-x-4 mb-4">
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 bg-pink-600 text-white py-3 rounded-md hover:bg-pink-700 transition flex items-center justify-center space-x-2"
+                  className="flex-1 bg-pink-600 text-white py-3 rounded-md hover:bg-pink-700 transition flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   <span>Add to Cart</span>
                 </button>
                 <button
                   onClick={handleToggleFavorite}
-                  className={`px-6 py-3 rounded-md border-2 transition ${
+                  className={`px-6 py-3 rounded-md border-2 transition cursor-pointer ${
                     isFavorite(product._id)
                       ? 'border-pink-600 bg-pink-50'
                       : 'border-gray-300 hover:border-pink-600'
@@ -267,7 +266,7 @@ export default function ProductDetail() {
               {!userHasReviewed && (
                 <button
                   onClick={handleWriteReview}
-                  className="w-full mb-4 bg-gray-100 text-gray-700 py-2 rounded-md hover:bg-gray-200 transition flex items-center justify-center space-x-2"
+                  className="w-full mb-4 bg-gray-100 text-gray-700 py-2 rounded-md hover:bg-gray-200 transition flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   <Star className="w-4 h-4" />
                   <span>Write a Review</span>

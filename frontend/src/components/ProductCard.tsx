@@ -90,7 +90,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <button
             onClick={handleToggleFavorite}
             disabled={isTogglingFavorite}
-            className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:shadow-lg transition disabled:opacity-70"
+            className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:shadow-lg transition disabled:opacity-70 cursor-pointer"
           >
             <Heart
               className={`w-5 h-5 transition-colors ${
@@ -111,7 +111,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <button
               onClick={handleAddToCart}
               disabled={isAddingToCart}
-              className="flex items-center space-x-1 bg-pink-600 text-white px-3 py-2 rounded-md hover:bg-pink-700 transition disabled:opacity-50"
+              className="flex items-center space-x-1 bg-pink-600 text-white px-3 py-2 rounded-md hover:bg-pink-700 transition disabled:opacity-50 cursor-pointer"
             >
               <ShoppingCart className="w-4 h-4" />
               <span className="text-sm">Add</span>

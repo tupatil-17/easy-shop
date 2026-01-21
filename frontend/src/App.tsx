@@ -19,6 +19,13 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const ApplyServiceProvider = lazy(() => import('./pages/ApplyServiceProvider'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const Reviews = lazy(() => import('./pages/Reviews'));
+const AboutUs = lazy(() => import('./pages/AboutUs'));
+const Career = lazy(() => import('./pages/Career'));
+const FAQ = lazy(() => import('./pages/FAQ'));
+const ContactUs = lazy(() => import('./pages/ContactUs'));
+const TermsOfUse = lazy(() => import('./pages/TermsOfUse'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const Security = lazy(() => import('./pages/Security'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 
@@ -32,6 +39,13 @@ export default function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="product/:id" element={<ProductDetail />} />
+          <Route path="about-us" element={<AboutUs />} />
+          <Route path="career" element={<Career />} />
+          <Route path="faq" element={<FAQ />} />
+          <Route path="contact-us" element={<ContactUs />} />
+          <Route path="terms-of-use" element={<TermsOfUse />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="security" element={<Security />} />
 
           {/* Protected Routes - All Authenticated Users */}
           <Route element={<ProtectedRoute />}>

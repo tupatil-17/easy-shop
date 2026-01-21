@@ -17,7 +17,7 @@ interface CartItem {
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (product: Product) => Promise<void>;
+  addToCart: (product: Product, quantity?: number) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
   clearCart: () => void;
@@ -32,7 +32,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartCount, setCartCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -60,7 +60,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const addToCart = async (product: Product) => {
+  const addToCart = async (product: Product, quantity: number = 1) => {
     const previousCart = [...cart];
     
     // Optimistic update
@@ -70,15 +70,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const newCart = [...prev];
         newCart[existingItemIndex] = {
           ...newCart[existingItemIndex],
-          quantity: newCart[existingItemIndex].quantity + 1
+          quantity: newCart[existingItemIndex].quantity + quantity
         };
         return newCart;
       }
-      return [...prev, { product, quantity: 1 }];
+      return [...prev, { product, quantity }];
     });
 
     try {
-      await axios.post(API_ENDPOINTS.CART.ADD(product._id));
+      await axios.post(API_ENDPOINTS.CART.ADD(product._id), { quantity });
       // Optionally fetch to sync with server state (e.g. stock changes)
       // await fetchCart(); 
     } catch (error: any) {

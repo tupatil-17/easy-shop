@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
-import { axios, useAuth } from '../context/AuthContext';
+import { axios } from '../context/AuthContext';
 import StarRating from './StarRating';
 
 // Configure axios with base URL
@@ -15,10 +15,11 @@ interface ReviewModalProps {
     name: string;
     images: string[];
   };
+  orderId?: string;
   onReviewAdded: () => void;
 }
 
-export default function ReviewModal({ isOpen, onClose, product, onReviewAdded }: ReviewModalProps) {
+export default function ReviewModal({ isOpen, onClose, product, orderId, onReviewAdded }: ReviewModalProps) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
@@ -40,7 +41,8 @@ export default function ReviewModal({ isOpen, onClose, product, onReviewAdded }:
       setLoading(true);
       await api.post(`/products/${product._id}/reviews`, {
         rating,
-        comment: comment.trim()
+        comment: comment.trim(),
+        orderId
       });
       
       toast.success('Review added successfully!');
@@ -56,13 +58,16 @@ export default function ReviewModal({ isOpen, onClose, product, onReviewAdded }:
   };
 
   if (!isOpen) return null;
-
+  
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div 
+      className="fixed inset-0 flex items-center justify-center z-[60] p-4"
+      style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)' }}
+    >
       <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Write a Review</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 cursor-pointer">
             <X className="w-6 h-6" />
           </button>
         </div>

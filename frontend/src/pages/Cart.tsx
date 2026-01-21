@@ -51,7 +51,7 @@ export default function Cart() {
           <p className="text-gray-600 mb-6">Add some products to get started!</p>
           <button
             onClick={() => navigate('/')}
-            className="bg-pink-600 text-white px-6 py-3 rounded-md hover:bg-pink-700 transition"
+            className="bg-pink-600 text-white px-6 py-3 rounded-md hover:bg-pink-700 transition cursor-pointer"
           >
             Start Shopping
           </button>
@@ -83,7 +83,7 @@ export default function Cart() {
                   <button
                     onClick={() => handleQuantityChange(item.product._id, item.quantity - 1)}
                     disabled={loading}
-                    className="p-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
+                    className="p-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 cursor-pointer"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
@@ -91,14 +91,14 @@ export default function Cart() {
                   <button
                     onClick={() => handleQuantityChange(item.product._id, item.quantity + 1)}
                     disabled={loading}
-                    className="p-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
+                    className="p-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
                 <button
                   onClick={() => handleRemove(item.product._id)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-md transition"
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-md transition cursor-pointer"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
@@ -129,7 +129,7 @@ export default function Cart() {
               <button
                 onClick={handleCheckout}
                 disabled={cart.length === 0}
-                className="w-full bg-pink-600 text-white py-3 rounded-md hover:bg-pink-700 transition font-semibold disabled:opacity-50"
+                className="w-full bg-pink-600 text-white py-3 rounded-md hover:bg-pink-700 transition font-semibold disabled:opacity-50 cursor-pointer"
               >
                 Proceed to Checkout
               </button>

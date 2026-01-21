@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useFavorites } from '../../context/FavoritesContext';
@@ -15,18 +15,37 @@ import MobileNavItem from './MobileNavItem';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   
   const { isAuthenticated, user, logout } = useAuth();
   const { cartCount } = useCart();
   const { favoritesCount } = useFavorites();
   const navigate = useNavigate();
 
-  // Memoized dashboard link based on user role
-  const dashboardLink = useMemo(() => {
-    if (!user?.role) return DEFAULT_DASHBOARD;
-    return ROLE_DASHBOARDS[user.role] || DEFAULT_DASHBOARD;
-  }, [user?.role]);
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const currentSearch = searchParams.get('search') || '';
+      if (searchQuery !== currentSearch) {
+        if (searchQuery.trim()) {
+          navigate(`/?search=${encodeURIComponent(searchQuery.trim())}`);
+        } else if (currentSearch) {
+          navigate('/');
+        }
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, navigate, searchParams]);
+
+  // Sync input with URL when navigating back/forward
+  useEffect(() => {
+    const query = searchParams.get('search') || '';
+    if (query !== searchQuery) {
+      setSearchQuery(query);
+    }
+  }, [searchParams]);
 
   const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +54,12 @@ const Navbar: React.FC = () => {
       setIsMenuOpen(false);
     }
   }, [searchQuery, navigate]);
+
+  // Memoized dashboard link based on user role
+  const dashboardLink = useMemo(() => {
+    if (!user?.role) return DEFAULT_DASHBOARD;
+    return ROLE_DASHBOARDS[user.role] || DEFAULT_DASHBOARD;
+  }, [user?.role]);
 
   const handleLogout = useCallback(() => {
     logout();
@@ -98,6 +123,7 @@ const Navbar: React.FC = () => {
                     icon={link.icon}
                     label={link.label}
                     badgeCount={getBadgeCount(link.showBadge)}
+                    imageUrl={link.id === 'profile' ? user?.profilePicture : undefined}
                   />
                 ))}
                 <button 
@@ -174,6 +200,7 @@ const Navbar: React.FC = () => {
                     icon={link.icon}
                     label={link.label}
                     badgeCount={getBadgeCount(link.showBadge)}
+                    imageUrl={link.id === 'profile' ? user?.profilePicture : undefined}
                     onClick={closeMenu}
                   />
                 ))}

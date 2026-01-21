@@ -6,12 +6,24 @@ import { ChevronLeft, ChevronRight, Sparkles, Clock } from 'lucide-react';
 import { MOCK_PRODUCTS } from '../utils/mockData';
 import { API_ENDPOINTS } from '../config/api';
 
+interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+  images?: string[];
+  category: string;
+  stock: number;
+  status: string;
+  image?: string; // For mock data compatibility
+}
+
 export default function Home() {
   const { isAuthenticated } = useAuth();
   const [searchParams] = useSearchParams();
-  const [products, setProducts] = useState([]);
-  const [recommendedProducts, setRecommendedProducts] = useState([]);
-  const [lastViewedProducts, setLastViewedProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
+  const [lastViewedProducts, setLastViewedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [recoLoading, setRecoLoading] = useState(false);
   const [viewedLoading, setViewedLoading] = useState(false);
@@ -157,7 +169,7 @@ export default function Home() {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => handleCategoryChange('all')}
-              className={`px-4 py-2 rounded-full transition ${
+              className={`px-4 py-2 rounded-full transition cursor-pointer ${
                 selectedCategory === 'all'
                   ? 'bg-pink-600 text-white'
                   : 'bg-white text-gray-700 border border-gray-300 hover:border-pink-600'
@@ -169,7 +181,7 @@ export default function Home() {
               <button
                 key={category}
                 onClick={() => handleCategoryChange(category)}
-                className={`px-4 py-2 rounded-full transition ${
+                className={`px-4 py-2 rounded-full transition cursor-pointer ${
                   selectedCategory === category
                     ? 'bg-pink-600 text-white'
                     : 'bg-white text-gray-700 border border-gray-300 hover:border-pink-600'
@@ -267,7 +279,7 @@ export default function Home() {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="p-2 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-2 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
@@ -284,7 +296,7 @@ export default function Home() {
                         <button
                           key={page}
                           onClick={() => handlePageChange(page)}
-                          className={`px-4 py-2 rounded-md ${
+                          className={`px-4 py-2 rounded-md cursor-pointer ${
                             currentPage === page
                               ? 'bg-pink-600 text-white'
                               : 'border border-gray-300 hover:bg-gray-100'
@@ -303,7 +315,7 @@ export default function Home() {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="p-2 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-2 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>

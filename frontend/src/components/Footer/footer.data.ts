@@ -1,4 +1,4 @@
-import { Facebook, Twitter, Instagram, Youtube, LucideIcon } from 'lucide-react';
+import { Instagram, Linkedin, LucideIcon } from 'lucide-react';
 
 export interface FooterLink {
   label: string;
@@ -24,38 +24,30 @@ export const FOOTER_SECTIONS: FooterSectionData[] = [
   {
     title: 'ABOUT EASYSHOP',
     links: [
-      { label: 'About Us', href: '/about' },
-      { label: 'Careers', href: '/careers' },
-      { label: 'Press', href: '/press' },
-      { label: 'Blog', href: '/blog' },
+      { label: 'About Us', href: '/about-us' },
+      { label: 'Career', href: '/career' },
     ],
   },
   {
     title: 'HELP',
     links: [
-      { label: 'Contact Us', href: '/contact' },
+      { label: 'Contact Us', href: '/contact-us' },
       { label: 'FAQ', href: '/faq' },
-      { label: 'Shipping', href: '/shipping' },
-      { label: 'Returns', href: '/returns' },
-      { label: 'Track Order', href: '/order-tracking' },
     ],
   },
   {
     title: 'POLICIES',
     links: [
-      { label: 'Terms of Use', href: '/terms' },
-      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Terms of Use', href: '/terms-of-use' },
+      { label: 'Privacy Policy', href: '/privacy-policy' },
       { label: 'Security', href: '/security' },
-      { label: 'Sitemap', href: '/sitemap' },
     ],
   },
 ];
 
 export const SOCIAL_LINKS: SocialLink[] = [
-  { icon: Facebook, href: 'https://facebook.com', label: 'Facebook' },
-  { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
-  { icon: Instagram, href: 'https://instagram.com', label: 'Instagram' },
-  { icon: Youtube, href: 'https://youtube.com', label: 'Youtube' },
+  { icon: Linkedin, href: 'https://www.linkedin.com/in/tushar-patil-a51448227', label: 'LinkedIn' },
+  { icon: Instagram, href: 'https://www.instagram.com/tusshar__patil_?igsh=MXJwN3c3a2w4eHNvZg==', label: 'Instagram' },
 ];
 
 export const PAYMENT_METHODS: PaymentMethod[] = [
